@@ -20,6 +20,9 @@ j.log_level(journal.LOG_INFO)
 j.seek_tail()
 j.get_previous()
 
+p = select.poll()
+p.register(j, j.get_events())
+
 while p.poll():
     if j.process() != journal.APPEND:
         continue
