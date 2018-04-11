@@ -4,6 +4,7 @@ import re
 import select
 from systemd import journal
 import requests
+import os
 
 def god_notice(line):
     curr_mess = ''
@@ -24,9 +25,11 @@ j.get_previous()
 p = select.poll()
 p.register(j, j.get_events())
 
-r = requests.get('https://api.telegram.org/bot'+ BotKey + '/getUpdates')
-print(r.text)
-r = requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':'-277997760', 'text':'my sample text'})
+print(os.environ)
+
+#r = requests.get('https://api.telegram.org/bot'+ BotKey + '/getUpdates')
+#print(r.text)
+#r = requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':'-277997760', 'text':'my sample text'})
 
 while p.poll():
     if j.process() != journal.APPEND:
