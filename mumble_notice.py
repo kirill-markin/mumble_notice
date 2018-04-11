@@ -10,8 +10,8 @@ def god_notice(line):
     match_out = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-([0-9]*)\)> Connection closed', line)
     if match_in:
         curr_mess = match_in.group('user') + ' in'
-    elif match_out:
-        curr_mess = match_out.group('user') + ' out'
+    #elif match_out:
+    #    curr_mess = match_out.group('user') + ' out'
     return curr_mess
 
 j = journal.Reader()
