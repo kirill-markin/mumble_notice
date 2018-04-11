@@ -6,6 +6,8 @@ from systemd import journal
 import requests
 import os
 
+BotKey = os.environ['BotKey']
+
 def god_notice(line):
     curr_mess = ''
     match_in = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-([0-9]*)\)> Authenticated', line)
@@ -15,8 +17,6 @@ def god_notice(line):
     #elif match_out:
     #    curr_mess = match_out.group('user') + ' out'
     return curr_mess
-
-BotKey = os.environ['BotKey']
 
 j = journal.Reader()
 j.log_level(journal.LOG_INFO)
