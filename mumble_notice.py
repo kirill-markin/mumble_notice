@@ -7,6 +7,7 @@ import requests
 import os
 
 BotKey = os.environ['BotKey']
+chat_id = os.environ['chat_id']
 
 def god_notice(line):
     curr_mess = ''
@@ -34,4 +35,4 @@ while p.poll():
         if entry['SYSLOG_IDENTIFIER'] == 'murmurd':
             notice_str = god_notice(entry['MESSAGE'])
             if notice_str != '':
-                requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':'-277997760', 'text':notice_str})
+                requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':chat_id, 'text':notice_str})
