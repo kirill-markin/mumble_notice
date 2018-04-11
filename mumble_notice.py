@@ -4,6 +4,8 @@ import re
 import select
 from systemd import journal
 import requests
+#import json
+##
 import os
 
 BotKey = os.environ['BotKey']
@@ -30,7 +32,7 @@ p.register(j, j.get_events())
 
 
 conf = open("conf.json",'r').read()
-print(conf.BotKey)
+print(conf['BotKey'])
 
 
 
