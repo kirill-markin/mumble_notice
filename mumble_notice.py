@@ -13,9 +13,9 @@ def god_notice(line):
     match_in = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-([0-9]*)\)> Authenticated', line)
     #match_out = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-([0-9]*)\)> Connection closed', line)
     if match_in:
-        curr_mess = match_in.group('user') + ' in'
+        curr_mess = match_in.group('user') + ' in mumble'
     #elif match_out:
-    #    curr_mess = match_out.group('user') + ' out'
+    #    curr_mess = match_out.group('user') + ' out of mumble'
     return curr_mess
 
 j = journal.Reader()
