@@ -27,8 +27,8 @@ while p.poll():
     if j.process() != journal.APPEND:
         continue
     for entry in j:
-        if entry['MESSAGE'] != "":
-            print(entry)
+        if entry['SYSLOG_IDENTIFIER'] == 'murmurd':
+            print(entry['MESSAGE'])
 
 #with open('test.txt', 'r') as tlogs:
 #    logs = list(tlogs)
