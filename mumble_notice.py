@@ -28,8 +28,6 @@ while p.poll():
         continue
     for entry in j:
         if entry['SYSLOG_IDENTIFIER'] == 'murmurd':
-            print(entry['MESSAGE'])
-
-#with open('test.txt', 'r') as tlogs:
-#    logs = list(tlogs)
-#    print(god_notice(logs[len(logs)-1]))
+            notice_str = god_notice(entry['MESSAGE'])
+            if notice_str != '':
+                print(notice_str)
