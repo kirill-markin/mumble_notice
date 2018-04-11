@@ -5,6 +5,12 @@
 
 Запустить на сервере:
 
+systemctl --user start mumble_notice
+
+//
+
+Перезапустить на сервере:
+
 systemctl --user restart mumble_notice
 
 //
