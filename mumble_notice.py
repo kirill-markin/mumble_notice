@@ -8,7 +8,6 @@ def god_notice(line):
         curr_mess = match_in.group('user') + ' in'
     elif match_out:
         curr_mess = match_out.group('user') + ' out'
-    
     return curr_mess
 
 with open('test.txt', 'r') as tlogs:
