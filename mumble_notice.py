@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import re
+import select
+from systemd import journal
 
 def god_notice(line):
     curr_mess = ''
@@ -12,6 +14,19 @@ def god_notice(line):
         curr_mess = match_out.group('user') + ' out'
     return curr_mess
 
-with open('test.txt', 'r') as tlogs:
-    logs = list(tlogs)
-    print(god_notice(logs[len(logs)-1]))
+j = journal.Reader()
+j.log_level(journal.LOG_INFO)
+
+j.seek_tail()
+j.get_previous()
+
+while p.poll():
+    if j.process() != journal.APPEND:
+        continue
+    for entry in j:
+        if entry['MESSAGE'] != "":
+            print(str(entry['__REALTIME_TIMESTAMP'] )+ ' ' + entry['MESSAGE'])
+
+#with open('test.txt', 'r') as tlogs:
+#    logs = list(tlogs)
+#    print(god_notice(logs[len(logs)-1]))
