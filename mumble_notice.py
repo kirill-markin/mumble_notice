@@ -30,6 +30,7 @@ p.register(j, j.get_events())
 
 
 conf = open("conf.json",'r').read()
+print(conf)
 
 
 
