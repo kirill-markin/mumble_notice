@@ -26,6 +26,7 @@ p = select.poll()
 p.register(j, j.get_events())
 
 print(os.environ)
+print(type(os.environ))
 
 #r = requests.get('https://api.telegram.org/bot'+ BotKey + '/getUpdates')
 #print(r.text)
