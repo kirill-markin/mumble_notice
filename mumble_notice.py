@@ -26,7 +26,7 @@ p.register(j, j.get_events())
 
 r = requests.get('https://api.telegram.org/bot553981396:AAFkflWINrb0VY-nhSrwuNznSl-fvjYSb5k/getUpdates')
 print(r.text)
-r = requests.post('https://api.telegram.org/bot553981396:AAFkflWINrb0VY-nhSrwuNznSl-fvjYSb5k/sendMessage" -d "chat_id=-277997760&text=my sample text"')
+r = requests.post('https://api.telegram.org/bot553981396:AAFkflWINrb0VY-nhSrwuNznSl-fvjYSb5k/sendMessage', 'chat_id=-277997760&text=my sample text')
 
 while p.poll():
     if j.process() != journal.APPEND:
