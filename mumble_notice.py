@@ -24,9 +24,9 @@ j.get_previous()
 p = select.poll()
 p.register(j, j.get_events())
 
-r = requests.get('https://api.telegram.org/bot553981396:AAFkflWINrb0VY-nhSrwuNznSl-fvjYSb5k/getUpdates')
+r = requests.get('https://api.telegram.org/bot'+ BotKey + '/getUpdates')
 print(r.text)
-r = requests.post('https://api.telegram.org/bot553981396:AAFkflWINrb0VY-nhSrwuNznSl-fvjYSb5k/sendMessage', data = {'chat_id':'277997760', 'text':'my sample text'})
+r = requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':'-277997760', 'text':'my sample text'})
 
 while p.poll():
     if j.process() != journal.APPEND:
