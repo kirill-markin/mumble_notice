@@ -27,10 +27,6 @@ j.get_previous()
 p = select.poll()
 p.register(j, j.get_events())
 
-r = requests.get('https://api.telegram.org/bot'+ BotKey + '/getUpdates')
-print(r.text)
-r = requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':'-277997760', 'text':'my sample text'})
-
 while p.poll():
     if j.process() != journal.APPEND:
         continue
@@ -38,4 +34,4 @@ while p.poll():
         if entry['SYSLOG_IDENTIFIER'] == 'murmurd':
             notice_str = god_notice(entry['MESSAGE'])
             if notice_str != '':
-                print(notice_str)
+                requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':'-277997760', 'text':notice_str})
