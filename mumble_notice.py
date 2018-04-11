@@ -5,11 +5,13 @@ import select
 from systemd import journal
 import requests
 import json
-##
-import os
 
-BotKey = os.environ['BotKey']
-ChatId = os.environ['ChatId']
+with open('conf.json', 'r') as f:
+    config = json.load(f)
+print(config['BotKey'])
+
+BotKey = config['BotKey']
+ChatId = config['ChatId']
 
 def god_notice(line):
     curr_mess = ''
@@ -29,12 +31,6 @@ j.get_previous()
 
 p = select.poll()
 p.register(j, j.get_events())
-
-with open('conf.json', 'r') as f:
-    config = json.load(f)
-print(config['BotKey'])
-
-
 
 while p.poll():
     if j.process() != journal.APPEND:
