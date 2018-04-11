@@ -8,7 +8,6 @@ import json
 
 with open('conf.json', 'r') as f:
     config = json.load(f)
-print(config['BotKey'])
 
 BotKey = config['BotKey']
 ChatId = config['ChatId']
