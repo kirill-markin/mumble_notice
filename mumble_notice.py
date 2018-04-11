@@ -3,6 +3,7 @@
 import re
 import select
 from systemd import journal
+import requests
 
 def god_notice(line):
     curr_mess = ''
@@ -22,6 +23,9 @@ j.get_previous()
 
 p = select.poll()
 p.register(j, j.get_events())
+
+r = requests.get('https://api.telegram.org/bot553981396:AAFkflWINrb0VY-nhSrwuNznSl-fvjYSb5k/getUpdates')
+print(r.status_code)
 
 while p.poll():
     if j.process() != journal.APPEND:
