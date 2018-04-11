@@ -1,0 +1,4 @@
+<W>2018-04-11 17:38:32.162 1 => <1:abbradar(-1)> Authenticated
+<W>2018-04-11 17:38:47.452 1 => <1:abbradar(-1)> Connection closed: The remote host closed the connection [1]
+<W>2018-04-11 17:38:32.162 1 => <1:abbradar(-1)> Authenticated
+<W>2018-04-11 17:38:47.452 1 => <1:abbradar(-1)> Connection closed: The remote host closed the connection [1]
