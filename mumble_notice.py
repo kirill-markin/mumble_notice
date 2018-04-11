@@ -29,7 +29,7 @@ p = select.poll()
 p.register(j, j.get_events())
 
 
-conf = Parameters(open("conf.json",'r').read())
+conf = open("conf.json",'r').read()
 
 
 
