@@ -28,6 +28,11 @@ j.get_previous()
 p = select.poll()
 p.register(j, j.get_events())
 
+
+conf = Parameters(open("conf.json",'r').read())
+
+
+
 while p.poll():
     if j.process() != journal.APPEND:
         continue
