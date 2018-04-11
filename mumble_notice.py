@@ -28,7 +28,7 @@ while p.poll():
         continue
     for entry in j:
         if entry['MESSAGE'] != "":
-            print(str(entry['__REALTIME_TIMESTAMP'] )+ ' ' + entry['MESSAGE'])
+            print(entry)
 
 #with open('test.txt', 'r') as tlogs:
 #    logs = list(tlogs)
