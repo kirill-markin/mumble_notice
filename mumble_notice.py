@@ -4,7 +4,7 @@ import re
 import select
 from systemd import journal
 import requests
-#import json
+import json
 ##
 import os
 
