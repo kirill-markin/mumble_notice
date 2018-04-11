@@ -30,9 +30,9 @@ j.get_previous()
 p = select.poll()
 p.register(j, j.get_events())
 
-
-conf = open("conf.json",'r').read()
-print(conf['BotKey'])
+with open('config.json', 'r') as f:
+    config = json.load(f)
+print(config['BotKey'])
 
 
 
