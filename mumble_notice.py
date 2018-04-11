@@ -25,7 +25,7 @@ p = select.poll()
 p.register(j, j.get_events())
 
 r = requests.get('https://api.telegram.org/bot553981396:AAFkflWINrb0VY-nhSrwuNznSl-fvjYSb5k/getUpdates')
-print(r.content)
+print(r.text)
 
 while p.poll():
     if j.process() != journal.APPEND:
