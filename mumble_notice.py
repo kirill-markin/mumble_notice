@@ -35,7 +35,7 @@ def god_notice(line):
 
 class MUCBot(sleekxmpp.ClientXMPP):
     
-    def __init__(self, jid, password, room, nick):
+    def __init__(self, jid, password, room, nick, text_notice):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
         self.room = room
@@ -56,7 +56,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
         self.disconnect(wait=True)
 
 def jabber_notice(text_notice):
-    xmpp = MUCBot(Jid, Jpass, Jmucroom, Jmucnic)
+    xmpp = MUCBot(Jid, Jpass, Jmucroom, Jmucnic, text_notice)
     xmpp.register_plugin('xep_0030') # Service Discovery
     xmpp.register_plugin('xep_0045') # Multi-User Chat
     xmpp.register_plugin('xep_0199') # XMPP Ping
@@ -84,6 +84,6 @@ try:
             if notice_str != '':
                 requests.post('https://api.telegram.org/bot' + BotKey + '/sendMessage', 
                               data = {'chat_id':ChatId, 'text':notice_str})
-                jabber_notice('123')
+                jabber_notice(notice_str)
 except KeyboardInterrupt:
     pass
