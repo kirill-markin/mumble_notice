@@ -40,10 +40,10 @@ class MUCBot(sleekxmpp.ClientXMPP):
 
         self.room = room
         self.nick = nick
-        self.add_event_handler("session_start" % self.room, self.start)
+        self.add_event_handler("session_start", self.start)
         #self.add_event_handler("groupchat_message", self.muc_message)
-        #self.add_event_handler("muc::%s::got_online" % self.room,
-        #                       self.muc_online)
+        self.add_event_handler("muc::%s::got_online" % self.room,
+                               self.muc_online)
 
     def start(self, presence, event):
         self.get_roster()
@@ -53,10 +53,6 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                         # If a room password is needed, use:
                                         # password=the_room_password,
                                         wait=True)
-        self.send_message(mto=presence['from'].bare,
-                          mbody="test",
-                          mtype='groupchat')
-        self.disconnect(wait=True)
         
 '''
     def muc_message(self, msg):
@@ -64,13 +60,13 @@ class MUCBot(sleekxmpp.ClientXMPP):
             self.send_message(mto=msg['from'].bare,
                               mbody="Я тебя люблю, %s." % msg['mucnick'],
                               mtype='groupchat')
-
-    def muc_online(self, presence):
-        if (False):
-            self.send_message(mto=presence['from'].bare,
-                              mbody="test",
-                              mtype='groupchat')
 '''
+    def muc_online(self, presence):
+        self.send_message(mto=presence['from'].bare,
+                          mbody="test",
+                          mtype='groupchat')
+        self.disconnect(wait=True)
+
 
 def jabber_notice(text_notice):
     if __name__ == '__main__':
