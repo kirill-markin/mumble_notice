@@ -114,7 +114,6 @@ j.add_match(SYSLOG_IDENTIFIER='murmurd')
 j.seek_tail()
 j.get_previous()
 
-<<<<<<< HEAD
 p = select.poll()
 p.register(j, j.get_events())
 
@@ -124,19 +123,10 @@ try:
             continue
         for entry in j:
             print(entry['MESSAGE'])
-=======
-while True:
-    if j.wait() != journal.APPEND:
-        continue
-    for entry in j:
->>>>>>> f37745bc5ce01774db3da8d78c92cd8991e5c339
             notice_str = god_notice(entry['MESSAGE'])
             if notice_str != '':
                 requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':ChatId, 'text':notice_str})
                 #jabber_notice('123')
-<<<<<<< HEAD
             print("Лог обработан")
 except KeyboardInterrupt:
     pass
-=======
->>>>>>> f37745bc5ce01774db3da8d78c92cd8991e5c339
