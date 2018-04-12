@@ -6,6 +6,11 @@ from systemd import journal
 import requests
 import json
 
+import logging
+from getpass import getpass
+from argparse import ArgumentParser
+import slixmpp
+
 with open('conf.json', 'r') as f:
     config = json.load(f)
 
