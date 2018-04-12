@@ -81,7 +81,7 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
 
         self.send_message(mto=self.recipient,
                           mbody=self.msg,
-                          mtype='chat')
+                          mtype='groupchat')
 
         # Using wait=True ensures that the send queue will be
         # emptied before ending the session.
