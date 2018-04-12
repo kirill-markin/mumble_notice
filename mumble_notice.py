@@ -122,7 +122,6 @@ try:
         if j.process() != journal.APPEND:
             continue
         for entry in j:
-            print(entry['MESSAGE'])
             notice_str = god_notice(entry['MESSAGE'])
             if notice_str != '':
                 requests.post('https://api.telegram.org/bot' + BotKey + '/sendMessage', 
