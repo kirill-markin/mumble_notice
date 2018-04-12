@@ -127,7 +127,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
         """
         if msg['mucnick'] != self.nick and self.nick in msg['body']:
             self.send_message(mto=msg['from'].bare,
-                              mbody="I heard that, %s." % msg['mucnick'],
+                              mbody="Я тебя люблю, %s." % msg['mucnick'],
                               mtype='groupchat')
 
     def muc_online(self, presence):
@@ -142,10 +142,9 @@ class MUCBot(sleekxmpp.ClientXMPP):
                         documentation for the Presence stanza
                         to see how else it may be used.
         """
-        if presence['muc']['nick'] != self.nick:
+        if (False)
             self.send_message(mto=presence['from'].bare,
-                              mbody="Hello, %s %s" % (presence['muc']['role'],
-                                                      presence['muc']['nick']),
+                              mbody="test",
                               mtype='groupchat')
 
 
