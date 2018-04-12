@@ -122,9 +122,9 @@ if __name__ == '__main__':
                         format='%(levelname)-8s %(message)s')
 
     if opts.jid is None:
-        opts.jid = raw_input("Username: ")
+        opts.jid = Jmail
     if opts.password is None:
-        opts.password = getpass.getpass("Password: ")
+        opts.password = Jpass
 
     # Setup the EchoBot and register plugins. Note that while plugins may
     # have interdependencies, the order in which you register them does
