@@ -40,6 +40,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
 
         self.room = room
         self.nick = nick
+        self.test_notice = text_notice
         self.add_event_handler("session_start", self.start)
 
     def start(self, event):
@@ -51,7 +52,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                         # password=the_room_password,
                                         wait=True)
         self.send_message(mto=self.room,
-                          mbody="test",
+                          mbody=self.test_notice,
                           mtype='groupchat')
         self.disconnect(wait=True)
 
