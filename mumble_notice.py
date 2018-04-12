@@ -117,11 +117,7 @@ while True:
     if j.wait() != journal.APPEND:
         continue
     for entry in j:
-            print(entry['MESSAGE'])
             notice_str = god_notice(entry['MESSAGE'])
-            print(notice_str)
             if notice_str != '':
                 requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':ChatId, 'text':notice_str})
-                print("Мама, я написал в телеграм")
                 #jabber_notice('123')
-            print("Лог обработан")
