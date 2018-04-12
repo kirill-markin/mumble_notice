@@ -76,13 +76,15 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
                      event does not provide any additional
                      data.
         """
+        print('1')
         self.send_presence()
         self.get_roster()
+        print('2')
 
         self.send_message(mto=self.recipient,
                           mbody=self.msg,
                           mtype='chat')
-
+        print('3')
         # Using wait=True ensures that the send queue will be
         # emptied before ending the session.
         self.disconnect(wait=True)
