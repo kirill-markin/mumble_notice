@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import re
+import select
 from systemd import journal
 import requests
 import json
@@ -113,10 +114,14 @@ j.add_match(SYSLOG_IDENTIFIER='murmurd')
 j.seek_tail()
 j.get_previous()
 
-while True:
-    if j.wait() != journal.APPEND:
-        continue
-    for entry in j:
+p = select.poll()
+p.register(j, j.get_events())
+
+try:
+    while p.poll():
+        if j.process() != journal.APPEND:
+            continue
+        for entry in j:
             print(entry['MESSAGE'])
             notice_str = god_notice(entry['MESSAGE'])
             print(notice_str)
@@ -125,3 +130,5 @@ while True:
                 print("Мама, я написал в телеграм")
                 #jabber_notice('123')
             print("Лог обработан")
+except KeyboardInterrupt:
+    pass
