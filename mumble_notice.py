@@ -121,6 +121,7 @@ while p.poll():
         continue
     for entry in j:
         if entry['SYSLOG_IDENTIFIER'] == 'murmurd':
+            print(entry['MESSAGE'])
             notice_str = god_notice(entry['MESSAGE'])
             if notice_str != '':
                 requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':ChatId, 'text':notice_str})
