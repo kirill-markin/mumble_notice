@@ -15,6 +15,8 @@ with open('conf.json', 'r') as f:
 
 BotKey = config['BotKey']
 ChatId = config['ChatId']
+Jmail = config['Jmail']
+Jpass = config['Jpass']
 
 def god_notice(line):
     curr_mess = ''
@@ -78,7 +80,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG,
                         format='%(levelname)-8s %(message)s')
 
-    xmpp = EchoBot('somejid@example.com', 'use_getpass')
+    xmpp = EchoBot(Jmail, Jpass)
     xmpp.connect()
     xmpp.process(block=True)
 
