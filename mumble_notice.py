@@ -41,7 +41,7 @@ else:
     raw_input = input
 
 
-class EchoBot(sleekxmpp.ClientXMPP):
+class SendMsgBot(sleekxmpp.ClientXMPP):
 
     """
     A simple SleekXMPP bot that will echo messages it
@@ -115,6 +115,11 @@ if __name__ == '__main__':
                     help="JID to use")
     optp.add_option("-p", "--password", dest="password",
                     help="password to use")
+    
+    optp.add_option("-t", "--to", dest="to",
+                    help="JID to send the message to")
+    optp.add_option("-m", "--message", dest="message",
+                    help="message to send")
 
     opts, args = optp.parse_args()
 
@@ -126,14 +131,16 @@ if __name__ == '__main__':
         opts.jid = Jmail
     if opts.password is None:
         opts.password = Jpass
+    if opts.to is None:
+        opts.to = 'kirkira@jabber.ru'
+    if opts.message is None:
+        opts.message = 'test message'
 
     # Setup the EchoBot and register plugins. Note that while plugins may
     # have interdependencies, the order in which you register them does
     # not matter.
-    xmpp = EchoBot(opts.jid, opts.password)
+    xmpp = SendMsgBot(opts.jid, opts.password, opts.to, opts.message)
     xmpp.register_plugin('xep_0030') # Service Discovery
-    xmpp.register_plugin('xep_0004') # Data Forms
-    xmpp.register_plugin('xep_0060') # PubSub
     xmpp.register_plugin('xep_0199') # XMPP Ping
 
     # If you are working with an OpenFire server, you may need
@@ -144,9 +151,7 @@ if __name__ == '__main__':
     # xmpp.ca_certs = "path/to/ca/cert"
 
     # Connect to the XMPP server and start processing XMPP stanzas.
-    print('Начинаю попытки связаться')
     if xmpp.connect(('jabber.ru', 5222)):
-        print('Связался')
         # If you do not have the dnspython library installed, you will need
         # to manually specify the name of the server if it does not match
         # the one in the JID. For example, to use Google Talk you would
@@ -158,7 +163,6 @@ if __name__ == '__main__':
         print("Done")
     else:
         print("Unable to connect.")
-    print('Закончил связь')
 
 
 #############
