@@ -53,7 +53,8 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                         # If a room password is needed, use:
                                         # password=the_room_password,
                                         wait=True)
-        self.send_message(mbody="test",
+        self.send_message(mto=self.recipient,
+                          mbody="test",
                           mtype='groupchat')
         self.disconnect(wait=True)
         
