@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import re
-import select
 from systemd import journal
 import requests
 import json
@@ -109,18 +108,15 @@ def jabber_notice(text_notice):
 
 j = journal.Reader()
 j.log_level(journal.LOG_INFO)
+j.add_match(SYSLOG_IDENTIFIER='murmurd')
 
 j.seek_tail()
 j.get_previous()
 
-p = select.poll()
-p.register(j, j.get_events())
-
-while p.poll():
-    if j.process() != journal.APPEND:
+while True:
+    if j.wait() != journal.APPEND:
         continue
     for entry in j:
-        if entry['SYSLOG_IDENTIFIER'] == 'murmurd':
             print(entry['MESSAGE'])
             notice_str = god_notice(entry['MESSAGE'])
             print(notice_str)
