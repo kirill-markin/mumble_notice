@@ -64,9 +64,8 @@ def jabber_notice(text_notice):
 
     if xmpp.connect():
         xmpp.process(block=True)
-        print("Done")
     else:
-        print("Unable to connect.")
+        print("Unable to connect to jabber.")
 
 j = journal.Reader()
 j.log_level(journal.LOG_INFO)
