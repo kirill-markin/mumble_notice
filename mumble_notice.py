@@ -126,6 +126,6 @@ try:
             if notice_str != '':
                 requests.post('https://api.telegram.org/bot' + BotKey + '/sendMessage', 
                               data = {'chat_id':ChatId, 'text':notice_str})
-                #jabber_notice('123')
+                jabber_notice('123')
 except KeyboardInterrupt:
     pass
