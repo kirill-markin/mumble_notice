@@ -6,19 +6,24 @@ from systemd import journal
 import requests
 import json
 
+'''
 import sys
 import logging
 import getpass
 from optparse import OptionParser
 import sleekxmpp
+'''
 
 with open('conf.json', 'r') as f:
     config = json.load(f)
 
 BotKey = config['BotKey']
 ChatId = config['ChatId']
+
+'''
 Jmail = config['Jmail']
 Jpass = config['Jpass']
+'''
 
 def god_notice(line):
     curr_mess = ''
@@ -31,7 +36,7 @@ def god_notice(line):
     return curr_mess
 
 ################
-
+'''
 
 if sys.version_info < (3, 0):
     reload(sys)
@@ -156,7 +161,7 @@ if __name__ == '__main__':
     else:
         print("Unable to connect.")
 
-
+'''
 #############
 
 j = journal.Reader()
