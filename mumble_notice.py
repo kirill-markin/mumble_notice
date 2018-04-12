@@ -18,7 +18,7 @@ with open('conf.json', 'r') as f:
 BotKey = config['BotKey']
 ChatId = config['ChatId']
 
-Jmail = config['Jmail']
+Jid = config['Jid']
 Jpass = config['Jpass']
 
 def god_notice(line):
@@ -44,8 +44,8 @@ else:
 class SendMsgBot(sleekxmpp.ClientXMPP):
 
     """
-    A simple SleekXMPP bot that will echo messages it
-    receives, along with a short thank you message.
+    A basic SleekXMPP bot that will log in, send a message,
+    and then log out.
     """
 
     def __init__(self, jid, password, recipient, message):
@@ -61,7 +61,7 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
         # and the XML streams are ready for use. We want to
         # listen for this event so that we we can initialize
         # our roster.
-        self.add_event_handler("session_start", self.start, threaded=True)
+        self.add_event_handler("session_start", self.start)
 
     def start(self, event):
         """
@@ -76,18 +76,17 @@ class SendMsgBot(sleekxmpp.ClientXMPP):
                      event does not provide any additional
                      data.
         """
-        print('1')
         self.send_presence()
         self.get_roster()
-        print('2')
 
         self.send_message(mto=self.recipient,
                           mbody=self.msg,
                           mtype='chat')
-        print('3')
+
         # Using wait=True ensures that the send queue will be
         # emptied before ending the session.
         self.disconnect(wait=True)
+
 
 if __name__ == '__main__':
     # Setup the command line arguments.
@@ -109,7 +108,6 @@ if __name__ == '__main__':
                     help="JID to use")
     optp.add_option("-p", "--password", dest="password",
                     help="password to use")
-    
     optp.add_option("-t", "--to", dest="to",
                     help="JID to send the message to")
     optp.add_option("-m", "--message", dest="message",
@@ -122,13 +120,13 @@ if __name__ == '__main__':
                         format='%(levelname)-8s %(message)s')
 
     if opts.jid is None:
-        opts.jid = Jmail
+        opts.jid = Jid
     if opts.password is None:
         opts.password = Jpass
     if opts.to is None:
-        opts.to = 'kirkira@jabber.ru'
+        opts.to = raw_input("Send To: ")
     if opts.message is None:
-        opts.message = 'test message'
+        opts.message = raw_input("Message: ")
 
     # Setup the EchoBot and register plugins. Note that while plugins may
     # have interdependencies, the order in which you register them does
@@ -145,7 +143,7 @@ if __name__ == '__main__':
     # xmpp.ca_certs = "path/to/ca/cert"
 
     # Connect to the XMPP server and start processing XMPP stanzas.
-    if xmpp.connect(('jabber.ru', 5222)):
+    if xmpp.connect():
         # If you do not have the dnspython library installed, you will need
         # to manually specify the name of the server if it does not match
         # the one in the JID. For example, to use Google Talk you would
@@ -157,7 +155,10 @@ if __name__ == '__main__':
         print("Done")
     else:
         print("Unable to connect.")
-
+        
+        
+        
+# ('jabber.ru', 5222)
 
 #############
 
