@@ -45,7 +45,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
         #self.add_event_handler("muc::%s::got_online" % self.room,
         #                       self.muc_online)
 
-    def start(self, event, presence):
+    def start(self, presence, event):
         self.get_roster()
         self.send_presence()
         self.plugin['xep_0045'].joinMUC(self.room,
