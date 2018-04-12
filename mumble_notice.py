@@ -53,7 +53,12 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                         # If a room password is needed, use:
                                         # password=the_room_password,
                                         wait=True)
-        
+
+    def muc_online(self, presence):
+        self.send_message(mto=presence['from'].bare,
+                          mbody="test",
+                          mtype='groupchat')
+        self.disconnect(wait=True)
 '''
     def muc_message(self, msg):
         if msg['mucnick'] != self.nick and self.nick in msg['body']:
@@ -61,11 +66,6 @@ class MUCBot(sleekxmpp.ClientXMPP):
                               mbody="Я тебя люблю, %s." % msg['mucnick'],
                               mtype='groupchat')
 '''
-    def muc_online(self, presence):
-        self.send_message(mto=presence['from'].bare,
-                          mbody="test",
-                          mtype='groupchat')
-        self.disconnect(wait=True)
 
 
 def jabber_notice(text_notice):
