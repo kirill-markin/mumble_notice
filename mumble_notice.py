@@ -126,5 +126,6 @@ while p.poll():
             print(notice_str)
             if notice_str != '':
                 requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':ChatId, 'text':notice_str})
+                print("Мама, я написал в телеграм")
                 #jabber_notice('123')
-            print("обработан")
+            print("Лог обработан")
