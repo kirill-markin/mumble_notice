@@ -112,8 +112,6 @@ j.log_level(journal.LOG_INFO)
 j.add_match(SYSLOG_IDENTIFIER='murmurd')
 
 j.seek_tail()
-j.get_previous()
-
 p = select.poll()
 p.register(j, j.get_events())
 
