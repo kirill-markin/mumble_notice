@@ -56,56 +56,16 @@ class MUCBot(sleekxmpp.ClientXMPP):
         self.disconnect(wait=True)
 
 def jabber_notice(text_notice):
-    if __name__ == '__main__':
-        # Setup the command line arguments.
-        optp = OptionParser()
+    xmpp = MUCBot(Jid, Jpass, Jmucroom, Jmucnic)
+    xmpp.register_plugin('xep_0030') # Service Discovery
+    xmpp.register_plugin('xep_0045') # Multi-User Chat
+    xmpp.register_plugin('xep_0199') # XMPP Ping
 
-        # Output verbosity options.
-        optp.add_option('-q', '--quiet', help='set logging to ERROR',
-                        action='store_const', dest='loglevel',
-                        const=logging.ERROR, default=logging.INFO)
-        optp.add_option('-d', '--debug', help='set logging to DEBUG',
-                        action='store_const', dest='loglevel',
-                        const=logging.DEBUG, default=logging.INFO)
-        optp.add_option('-v', '--verbose', help='set logging to COMM',
-                        action='store_const', dest='loglevel',
-                        const=5, default=logging.INFO)
-
-        # JID and password options.
-        optp.add_option("-j", "--jid", dest="jid",
-                        help="JID to use")
-        optp.add_option("-p", "--password", dest="password",
-                        help="password to use")
-        optp.add_option("-r", "--room", dest="room",
-                        help="MUC room to join")
-        optp.add_option("-n", "--nick", dest="nick",
-                        help="MUC nickname")
-
-        opts, args = optp.parse_args()
-
-        # Setup logging.
-        logging.basicConfig(level=opts.loglevel,
-                            format='%(levelname)-8s %(message)s')
-
-        if opts.jid is None:
-            opts.jid = Jid
-        if opts.password is None:
-            opts.password = Jpass
-        if opts.room is None:
-            opts.room = Jmucroom
-        if opts.nick is None:
-            opts.nick = Jmucnic
-
-        xmpp = MUCBot(opts.jid, opts.password, opts.room, opts.nick)
-        xmpp.register_plugin('xep_0030') # Service Discovery
-        xmpp.register_plugin('xep_0045') # Multi-User Chat
-        xmpp.register_plugin('xep_0199') # XMPP Ping
-
-        if xmpp.connect():
-            xmpp.process(block=True)
-            print("Done")
-        else:
-            print("Unable to connect.")
+    if xmpp.connect():
+        xmpp.process(block=True)
+        print("Done")
+    else:
+        print("Unable to connect.")
 
 j = journal.Reader()
 j.log_level(journal.LOG_INFO)
