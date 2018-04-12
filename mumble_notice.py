@@ -122,7 +122,10 @@ while p.poll():
     for entry in j:
         if entry['SYSLOG_IDENTIFIER'] == 'murmurd':
             print(entry['MESSAGE'])
+            print(notice_str)
             notice_str = god_notice(entry['MESSAGE'])
+            print(notice_str)
             if notice_str != '':
                 requests.post('https://api.telegram.org/bot'+ BotKey + '/sendMessage', data = {'chat_id':ChatId, 'text':notice_str})
                 #jabber_notice('123')
+            print("обработан")
