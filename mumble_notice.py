@@ -142,7 +142,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                         documentation for the Presence stanza
                         to see how else it may be used.
         """
-        if (False)
+        if (False):
             self.send_message(mto=presence['from'].bare,
                               mbody="test",
                               mtype='groupchat')
