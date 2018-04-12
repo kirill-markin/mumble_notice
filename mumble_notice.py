@@ -40,9 +40,9 @@ class MUCBot(sleekxmpp.ClientXMPP):
 
         self.room = room
         self.nick = nick
-        self.add_event_handler("session_start" % self.room, self.start)
+        self.add_event_handler("session_start", self.start)
 
-    def start(self, presence, event):
+    def start(self, event):
         self.get_roster()
         self.send_presence()
         self.plugin['xep_0045'].joinMUC(self.room,
@@ -50,7 +50,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
                                         # If a room password is needed, use:
                                         # password=the_room_password,
                                         wait=True)
-        self.send_message(mto=presence,
+        self.send_message(mto=self.room,
                           mbody="test",
                           mtype='groupchat')
         self.disconnect(wait=True)
