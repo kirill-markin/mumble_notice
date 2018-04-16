@@ -2,9 +2,13 @@
 
 import re
 import select
-from systemd import journal
+import systemd.journal
 import requests
 import json
+import threading
+import time
+import logging
+import copy
 
 import sys
 import logging
@@ -12,29 +16,64 @@ import getpass
 from optparse import OptionParser
 import sleekxmpp
 
-with open('conf.json', 'r') as f:
-    config = json.load(f)
 
-BotKey = config['BotKey']
-ChatId = config['ChatId']
+class GodNotifier:
+    def __init__(self, delay, notify_target):
+        self._users_online = set()
+        self._prev_users_online = set()
+        self._conclusion_thread = None
+        self._lock = threading.Lock()
+        self._notify_target = notify_target
+        self._delay = delay
+        self._logger = logging.getLogger("GodNotifier")
 
-Jid = config['Jid']
-Jpass = config['Jpass']
-Jmucroom = config['Jmucroom']
-Jmucnic = config['Jmucnic']
+    def update(self, line):
+        match_in = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-([0-9]*)\)> Authenticated', line)
+        match_out = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-([0-9]*)\)> Connection closed', line)
+        with self._lock:
+            if match_in:
+                user = match_in.group('user')
+                self._logger.info(f"User {user} is online")
+                self._users_online.add(user)
+                self._run_conclusion_if_not()
+            elif match_out:
+                user = match_out.group('user')
+                self._logger.info(f"User {user} is offline")
+                self._users_online.discard(user)
+                self._run_conclusion_if_not()
 
-def god_notice(line):
-    curr_mess = ''
-    match_in = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-([0-9]*)\)> Authenticated', line)
-    #match_out = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-([0-9]*)\)> Connection closed', line)
-    if match_in:
-        curr_mess = match_in.group('user') + ' in mumble'
-    #elif match_out:
-    #    curr_mess = match_out.group('user') + ' out of mumble'
-    return curr_mess
+    def _wait_and_conclude(self):
+        time.sleep(self._delay)
+        old_users = None
+        new_users = None
+        with self._lock:
+            self._logger.debug(f"Comparing after delay, old users {self._prev_users_online}, new users {self._users_online}")
+            if self._users_online != self._prev_users_online:
+                new_users = self._users_online
+                old_users = self._prev_users_online
+                self._prev_users_online = copy.copy(self._users_online)
+                if len(self._prev_users_online) != 0:
+                    self._run_conclusion()
+                else:
+                    self._conclusion_thread = None
+            else:
+                self._conclusion_thread = None
+        if old_users is not None:
+            self._logger.info("Notifying, old users {old_users}, new users {new_users}")
+            thread = threading.Thread(target=self._notify_target, args=(old_users, new_users))
+            thread.start()
+
+    def _run_conclusion_if_not(self):
+        if self._conclusion_thread is None:
+            self._run_conclusion()
+
+    def _run_conclusion(self):
+        self._logger.debug("Starting conclusion delay thread")
+        self._conclusion_thread = threading.Thread(target=self._wait_and_conclude, daemon=True)
+        self._conclusion_thread.start()
+
 
 class MUCBot(sleekxmpp.ClientXMPP):
-    
     def __init__(self, jid, password, room, nick, text_notice):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
@@ -48,16 +87,38 @@ class MUCBot(sleekxmpp.ClientXMPP):
         self.send_presence()
         self.plugin['xep_0045'].joinMUC(self.room,
                                         self.nick,
-                                        # If a room password is needed, use:
-                                        # password=the_room_password,
                                         wait=True)
         self.send_message(mto=self.room,
                           mbody=self.test_notice,
                           mtype='groupchat')
         self.disconnect(wait=True)
 
+
+with open('conf.json', 'r') as f:
+    config = json.load(f)
+
+delay = config['Delay']
+
+bot_key = config['BotKey']
+chat_id = config['ChatId']
+
+j_id = config['Jid']
+j_pass = config['Jpass']
+j_mucroom = config['Jmucroom']
+j_muc_nick = config['Jmucnic']
+
+logging.basicConfig(level=logging.DEBUG)
+
+j = systemd.journal.Reader()
+j.log_level(systemd.journal.LOG_INFO)
+j.add_match(SYSLOG_IDENTIFIER='murmurd')
+
+j.seek_tail()
+p = select.poll()
+p.register(j, j.get_events())
+
 def jabber_notice(text_notice):
-    xmpp = MUCBot(Jid, Jpass, Jmucroom, Jmucnic, text_notice)
+    xmpp = MUCBot(j_id, j_pass, j_mucroom, j_muc_nick, text_notice)
     xmpp.register_plugin('xep_0030') # Service Discovery
     xmpp.register_plugin('xep_0045') # Multi-User Chat
     xmpp.register_plugin('xep_0199') # XMPP Ping
@@ -67,23 +128,36 @@ def jabber_notice(text_notice):
     else:
         print("Unable to connect to jabber.")
 
-j = journal.Reader()
-j.log_level(journal.LOG_INFO)
-j.add_match(SYSLOG_IDENTIFIER='murmurd')
+def run_god_notice(old_users, new_users):
+    left_users = old_users.difference(new_users)
+    joined_users = new_users.difference(old_users)
 
-j.seek_tail()
-p = select.poll()
-p.register(j, j.get_events())
+    if len(new_users) == 0:
+        total_str = "No Mumble users online\n"
+    else:
+        online_str = ", ".join(sorted(new_users))
+        total_str = f"Mumble users online: {online_str}\n"
+    joined_str = ""
+    if len(joined_users) > 0:
+        list_str = ", ".join(sorted(joined_users))
+        joined_str = f"Users joined: {list_str}"
+    left_str = ""
+    if len(left_users) > 0:
+        list_str = ", ".join(sorted(left_users))
+        left_str = f"Users left: {list_str}"
+    notice_str = total_str + joined_str + left_str
+
+    requests.post('https://api.telegram.org/bot' + bot_key + '/sendMessage',
+        data = {'chat_id':chat_id, 'text':notice_str})
+    jabber_notice(notice_str)
+
+god_notice = GodNotifier(delay, run_god_notice)
 
 try:
     while p.poll():
-        if j.process() != journal.APPEND:
+        if j.process() != systemd.journal.APPEND:
             continue
         for entry in j:
-            notice_str = god_notice(entry['MESSAGE'])
-            if notice_str != '':
-                requests.post('https://api.telegram.org/bot' + BotKey + '/sendMessage', 
-                              data = {'chat_id':ChatId, 'text':notice_str})
-                jabber_notice(notice_str)
+            god_notice.update(entry['MESSAGE'])
 except KeyboardInterrupt:
     pass
