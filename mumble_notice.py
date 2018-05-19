@@ -128,10 +128,13 @@ def jabber_notice(text_notice):
     else:
         print("Unable to connect to jabber.")
 
+def mangle_nick(nick):
+    return nick + "M"
+
+def list_nicks(nicks):
+    return ", ".join(map(mangle_nick, sorted(nicks)))
+
 def run_god_notice(old_users, new_users):
-    def append_char(list_of_strings, append_char="M"):
-        return list(map(lambda s: s + append_char, list_of_strings))
-    
     left_users = old_users.difference(new_users)
     joined_users = new_users.difference(old_users)
 
@@ -139,13 +142,13 @@ def run_god_notice(old_users, new_users):
     if len(new_users) == 0:
         strs.append("No Mumble users online")
     else:
-        online_str = ", ".join(append_char(sorted(new_users)))
+        online_str = list_nicks(new_users)
         strs.append(f"Mumble users online: {online_str}")
     if len(joined_users) > 0:
-        list_str = ", ".join(append_char(sorted(joined_users)))
+        list_str = list_nicks(joined_users)
         strs.append(f"Users joined: {list_str}")
     if len(left_users) > 0:
-        list_str = ", ".join(append_char(sorted(left_users)))
+        list_str = list_nicks(left_users)
         strs.append(f"Users left: {list_str}")
     notice_str = "\n".join(strs)
 
