@@ -135,20 +135,19 @@ def run_god_notice(old_users, new_users):
     left_users = old_users.difference(new_users)
     joined_users = new_users.difference(old_users)
 
+    strs = []
     if len(new_users) == 0:
-        total_str = "No Mumble users online\n"
+        strs.append("No Mumble users online")
     else:
         online_str = ", ".join(append_char(sorted(new_users)))
-        total_str = f"Mumble users online: {online_str}\n"
-    joined_str = ""
+        strs.append(f"Mumble users online: {online_str}")
     if len(joined_users) > 0:
         list_str = ", ".join(append_char(sorted(joined_users)))
-        joined_str = f"Users joined: {list_str}"
-    left_str = ""
+        strs.append(f"Users joined: {list_str}")
     if len(left_users) > 0:
         list_str = ", ".join(append_char(sorted(left_users)))
-        left_str = f"Users left: {list_str}"
-    notice_str = total_str + joined_str + left_str
+        strs.append(f"Users left: {list_str}")
+    notice_str = "\n".join(strs)
 
     requests.post('https://api.telegram.org/bot' + bot_key + '/sendMessage',
         data = {'chat_id':chat_id, 'text':notice_str})
