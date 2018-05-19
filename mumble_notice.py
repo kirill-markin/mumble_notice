@@ -129,7 +129,8 @@ def jabber_notice(text_notice):
         print("Unable to connect to jabber.")
 
 def mangle_nick(nick):
-    return nick + "M"
+    # Zero-width space
+    return nick[:1] + "\u200B" + nick[1:]
 
 def list_nicks(nicks, mangle_func=None):
     prepared = sorted(nicks)
