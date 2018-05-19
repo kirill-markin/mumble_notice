@@ -131,30 +131,44 @@ def jabber_notice(text_notice):
 def mangle_nick(nick):
     return nick + "M"
 
-def list_nicks(nicks):
-    return ", ".join(map(mangle_nick, sorted(nicks)))
+def list_nicks(nicks, mangle_func=None):
+    prepared = sorted(nicks)
+    if mangle_func is not None:
+        prepared = map(mangle_func, prepared)
+    return ", ".join(prepared)
 
-def run_god_notice(old_users, new_users):
+def run_god_notice(old_users, new_users, mangle_func=mangle_nick):
     left_users = old_users.difference(new_users)
     joined_users = new_users.difference(old_users)
 
     strs = []
+    mangled_strs = []
+
+    def append_line(line, nicks=None):
+        nonlocal strs, mangled_strs
+
+        if nicks is None:
+            strs.append(line)
+            mangled_strs.append(line)
+        else:
+            strs.append(line.format(list_nicks(nicks)))
+            mangled_strs.append(line.format(list_nicks(nicks, mangle_func=mangle_nick)))
+
     if len(new_users) == 0:
-        strs.append("No Mumble users online")
+        append_line("No Mumble users online")
     else:
-        online_str = list_nicks(new_users)
-        strs.append(f"Mumble users online: {online_str}")
+        append_line("Mumble users online: {}", new_users)
     if len(joined_users) > 0:
-        list_str = list_nicks(joined_users)
-        strs.append(f"Users joined: {list_str}")
+        append_line("Users joined: {}", joined_users)
     if len(left_users) > 0:
-        list_str = list_nicks(left_users)
-        strs.append(f"Users left: {list_str}")
+        append_line("Users left: {}", left_users)
+
     notice_str = "\n".join(strs)
+    mangled_notice_str = "\n".join(mangled_strs)
 
     requests.post('https://api.telegram.org/bot' + bot_key + '/sendMessage',
         data = {'chat_id':chat_id, 'text':notice_str})
-    jabber_notice(notice_str)
+    jabber_notice(mangled_notice_str)
 
 god_notice = GodNotifier(delay, run_god_notice)
 
