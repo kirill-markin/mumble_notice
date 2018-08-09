@@ -1,5 +1,27 @@
 # mumble_notice
 
+# Dependencies
+
+```
+import re
+import select
+import systemd.journal
+import requests
+import json
+import threading
+import time
+import logging
+import copy
+
+import sys
+import logging
+import getpass
+from optparse import OptionParser
+import sleekxmpp
+```
+
+# Config
+
 Requires one more file on the same directory `conf.json` with the structure:
 ```
 {
@@ -24,6 +46,8 @@ For jabber:
 
 Common
 * Delay 
+
+# Commands
 
 Start on the server:
 ```systemctl --user start mumble_notice```
