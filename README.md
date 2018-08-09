@@ -1,6 +1,6 @@
 # mumble_notice
 
-# Dependencies
+## Dependencies
 
 ```
 import re
@@ -20,7 +20,7 @@ from optparse import OptionParser
 import sleekxmpp
 ```
 
-# Config
+## Config
 
 Requires one more file on the same directory `conf.json` with the structure:
 ```
@@ -47,7 +47,7 @@ For jabber:
 Common
 * Delay 
 
-# Commands
+## Commands
 
 Start on the server:
 ```systemctl --user start mumble_notice```
