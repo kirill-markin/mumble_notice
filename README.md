@@ -15,11 +15,13 @@ Requires one more file on the same directory `conf.json` with the structure:
 For telegram:
 * BotKey
 * ChatId
+
 For jabber:
 * Jid
 * Jpass
 * Jmucroom
 * Jmucnic
+
 Common
 * Delay 
 
