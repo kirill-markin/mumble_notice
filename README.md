@@ -1,6 +1,6 @@
 # mumble_notice
 
-Notice in telegram and jabber when someone enters or leaves mumble room.
+Notice in telegram and jabber when someone enters or leaves mumble room on the same server.
 
 ## Dependencies
 
