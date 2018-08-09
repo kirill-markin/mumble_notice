@@ -1,5 +1,7 @@
 # mumble_notice
 
+Notice in telegram and jabber when someone enters or leaves mumble room.
+
 ## Dependencies
 
 ```
