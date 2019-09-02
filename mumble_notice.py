@@ -28,19 +28,21 @@ class GodNotifier:
         self._logger = logging.getLogger("GodNotifier")
 
     def update(self, line):
-        match_in = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-([0-9]*)\)> Authenticated', line)
-        match_out = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-([0-9]*)\)> Connection closed', line)
+        match_in = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-?([0-9]*)\)> Authenticated', line)
+        match_out = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-?([0-9]*)\)> Connection closed', line)
         with self._lock:
             if match_in:
                 user = match_in.group('user')
-                self._logger.info(f"User {user} is online")
-                self._users_online.add(user)
-                self._run_conclusion_if_not()
+                if not user.startswith('_'):
+                    self._logger.info(f"User {user} is online")
+                    self._users_online.add(user)
+                    self._run_conclusion_if_not()
             elif match_out:
                 user = match_out.group('user')
-                self._logger.info(f"User {user} is offline")
-                self._users_online.discard(user)
-                self._run_conclusion_if_not()
+                if not user.startswith('_'):
+                    self._logger.info(f"User {user} is offline")
+                    self._users_online.discard(user)
+                    self._run_conclusion_if_not()
 
     def _wait_and_conclude(self):
         time.sleep(self._delay)
