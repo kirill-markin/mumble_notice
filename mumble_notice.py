@@ -11,7 +11,6 @@ import copy
 
 import sys
 import logging
-import getpass
 from optparse import OptionParser
 import sleekxmpp
 
@@ -91,7 +90,7 @@ class MUCBot(sleekxmpp.ClientXMPP):
         self.disconnect(wait=True)
 
 
-with open('conf.json', 'r') as f:
+with open(sys.argv[1], 'r') as f:
     config = json.load(f)
 
 address = config['Address']
