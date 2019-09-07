@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
+import Murmur, Ice
 import re
-import select
-import systemd.journal
 import requests
 import json
 import threading
@@ -12,13 +11,12 @@ import copy
 
 import sys
 import logging
-import getpass
 from optparse import OptionParser
 import sleekxmpp
 
 
 class GodNotifier:
-    def __init__(self, delay, notify_target):
+    def __init__(self, proxy, delay, notify_target):
         self._users_online = set()
         self._prev_users_online = set()
         self._conclusion_thread = None
@@ -26,23 +24,19 @@ class GodNotifier:
         self._notify_target = notify_target
         self._delay = delay
         self._logger = logging.getLogger("GodNotifier")
+        meta = Murmur.MetaPrx.checkedCast(proxy)
+        self._server = meta.getAllServers()[0]
 
-    def update(self, line):
-        match_in = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-?([0-9]*)\)> Authenticated', line)
-        match_out = re.search(r'=> <([0-9]*):(?P<user>[^ ]*)\(-?([0-9]*)\)> Connection closed', line)
+    def update(self):
+        users = self._server.getUsers()
+        users_online = set()
+        for user in users.values():
+            if not user.name.startswith('_'):
+                users_online.add(user.name)
         with self._lock:
-            if match_in:
-                user = match_in.group('user')
-                if not user.startswith('_'):
-                    self._logger.info(f"User {user} is online")
-                    self._users_online.add(user)
-                    self._run_conclusion_if_not()
-            elif match_out:
-                user = match_out.group('user')
-                if not user.startswith('_'):
-                    self._logger.info(f"User {user} is offline")
-                    self._users_online.discard(user)
-                    self._run_conclusion_if_not()
+            if self._users_online != users_online:
+                self._users_online = users_online
+                self._run_conclusion_if_not()
 
     def _wait_and_conclude(self):
         time.sleep(self._delay)
@@ -96,9 +90,10 @@ class MUCBot(sleekxmpp.ClientXMPP):
         self.disconnect(wait=True)
 
 
-with open('conf.json', 'r') as f:
+with open(sys.argv[1], 'r') as f:
     config = json.load(f)
 
+address = config['Address']
 delay = config['Delay']
 
 bot_key = config['BotKey']
@@ -110,14 +105,6 @@ j_mucroom = config['Jmucroom']
 j_muc_nick = config['Jmucnic']
 
 logging.basicConfig(level=logging.DEBUG)
-
-j = systemd.journal.Reader()
-j.log_level(systemd.journal.LOG_INFO)
-j.add_match(SYSLOG_IDENTIFIER='murmurd')
-
-j.seek_tail()
-p = select.poll()
-p.register(j, j.get_events())
 
 def jabber_notice(text_notice):
     xmpp = MUCBot(j_id, j_pass, j_mucroom, j_muc_nick, text_notice)
@@ -176,13 +163,13 @@ def run_god_notice(old_users, new_users, mangle_func=mangle_nick):
         data = {'chat_id':chat_id, 'text':notice_str})
     jabber_notice(mangled_notice_str)
 
-god_notice = GodNotifier(delay, run_god_notice)
-
-try:
-    while p.poll():
-        if j.process() != systemd.journal.APPEND:
-            continue
-        for entry in j:
-            god_notice.update(entry['MESSAGE'])
-except KeyboardInterrupt:
-    pass
+if __name__ == "__main__":
+    with Ice.initialize() as communicator:
+        proxy = communicator.stringToProxy("Meta:" + address)
+        god_notice = GodNotifier(proxy, delay, run_god_notice)
+        try:
+            while True:
+                god_notice.update()
+                time.sleep(1)
+        except KeyboardInterrupt:
+            pass
